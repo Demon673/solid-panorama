@@ -150,7 +150,7 @@ export default {
     testPathIgnorePatterns: [
         '__tests__/utils.ts',
         '__tests__/css_a.ts',
-        join(__dirname, 'node_modules')
+        join(import.meta.url, 'node_modules')
     ],
 
     // The regexp pattern or array of patterns that Jest uses to detect test files

@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`localize_macro getLocalizationTable 1`] = `
 ""use strict";
@@ -6,5 +6,9 @@ exports[`localize_macro getLocalizationTable 1`] = `
 const token_a = "#test_token_a";
 const token_b = "#test_token_b";
 const token_c = "#token_f780dc967d9b71be";
-const token_d = "#token_fa636963348fd7d0";"
+const token_d = "#token_fa636963348fd7d0";
+const local_a = $.Localize("#test_token_a");
+const local_b = $.Localize("#test_token_b");
+const local_c = $.Localize("#token_f780dc967d9b71be");
+const local_d = $.Localize("#token_fa636963348fd7d0");"
 `;

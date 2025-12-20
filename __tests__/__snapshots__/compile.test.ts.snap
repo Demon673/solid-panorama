@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`compile custom properties: dynamic 1`] = `
 ""use strict";
@@ -75,6 +75,9 @@ function App() {
       id: "RootPanel",
       "class": "root",
       hittest: false,
+      enabled: false,
+      visible: false,
+      checked: false,
       hittestchildren: false,
       acceptsfocus: false,
       tabindex: 0,

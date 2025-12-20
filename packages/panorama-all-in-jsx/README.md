@@ -275,6 +275,12 @@ const token_a = localize('this is a');
 const token_a = '#token_46c17b9343c831a6';
 ```
 
+### $.Locaize
+
+实际使用时难免也要用到`$.Locaize()`获取实际的文本，例如`$.Locaize(localize('this is a'))`这样的写法就不太好看；
+
+所以加入了一个简化版的`localize.$('this is a')`，会直接转成`$.Locaize('#token_46c17b9343c831a6')`
+
 ### 指定字段名称
 
 第一个参数一定要以`#`开头

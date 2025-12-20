@@ -3,10 +3,102 @@ import { createHash } from 'crypto';
 import { existsSync } from 'fs';
 import { join } from 'path';
 import { KeyValues } from 'easy-keyvalues';
+import { NodePath } from '@babel/core';
+import { CallExpression } from '@babel/types';
+import * as Babel from '@babel/core';
 
 type LocalizationTable = Record<string, Record<string, string>>;
 
 let fileLocalization: Record<string, LocalizationTable> = {};
+
+function parse(
+    babel: typeof Babel,
+    filename: string,
+    localizationTable: LocalizationTable,
+    argv: string[],
+    path: NodePath<CallExpression>,
+    replaceWithLocalize: boolean
+) {
+    // arguments must be more than 1
+    if (path.node.arguments.length < 1) {
+        console.warn(`${filename} localize arguments must be more than 1`);
+        return;
+    }
+
+    // fetch token and localization data
+    let token = '';
+    let isAnonymous = false;
+    let localizationData: Record<string, string> = {};
+    let offset = 1;
+    for (const [i, arg] of path.node.arguments.entries()) {
+        // arguments must be string literals
+        if (!babel.types.isStringLiteral(arg)) {
+            throw new Error('localize arguments must be string literals');
+        }
+        // first argument is token
+        if (i === 0) {
+            token = arg.value;
+            if (token === '') {
+                throw new Error('localize first argument is empty');
+            }
+            if (token[0] === '#') {
+                if (token.length === 1) {
+                    isAnonymous = true;
+                    token = '';
+                } else {
+                    token = token.slice(1);
+                }
+            } else {
+                isAnonymous = true;
+                token = arg.value;
+                offset = 0;
+                const lang = argv[0];
+                if (!lang) {
+                    throw new Error(
+                        `localize argument ${i} is not defined in config, please define it in babel-plugin-macros config, example: { "language_argv": ["english", "schinese", "russian"] }`
+                    );
+                }
+                localizationData[lang] = arg.value;
+            }
+        } else {
+            // arguments must be defined in config
+            const lang = argv[i - offset];
+            if (!lang) {
+                throw new Error(
+                    `localize argument ${i} is not defined in config, please define it in babel-plugin-macros config, example: { "language_argv": ["english", "schinese", "russian"] }`
+                );
+            }
+            localizationData[lang] = arg.value;
+            if (isAnonymous) {
+                token += arg.value;
+            }
+        }
+    }
+
+    // if token is anonymous, hash it
+    if (isAnonymous) {
+        const hash = createHash('sha256');
+        hash.update(token);
+        token = `token_${hash.digest('hex').slice(0, 16)}`;
+    }
+    localizationTable[token] = localizationData;
+
+    if (replaceWithLocalize) {
+        // replace localize.$ call with $.Localize call
+        path.replaceWith(
+            babel.types.callExpression(
+                babel.types.memberExpression(
+                    babel.types.identifier('$'),
+                    babel.types.identifier('Localize')
+                ),
+                [babel.types.stringLiteral('#' + token)]
+            )
+        );
+    } else {
+        // replace localize call with token
+        path.replaceWith(babel.types.stringLiteral('#' + token));
+    }
+}
 
 export default createMacro(
     function ({ references, state, babel, config }) {
@@ -19,81 +111,29 @@ export default createMacro(
 
         for (const path of references.default) {
             if (path.parentPath && path.parentPath.isCallExpression()) {
-                // arguments must be more than 1
-                if (path.parentPath.node.arguments.length < 1) {
-                    console.warn(
-                        `${state.filename} localize arguments must be more than 1`
-                    );
-                    continue;
-                }
-
-                // fetch token and localization data
-                let token = '';
-                let isAnonymous = false;
-                let localizationData: Record<string, string> = {};
-                let offset = 1;
-                for (const [
-                    i,
-                    arg
-                ] of path.parentPath.node.arguments.entries()) {
-                    // arguments must be string literals
-                    if (!babel.types.isStringLiteral(arg)) {
-                        throw new Error(
-                            'localize arguments must be string literals'
-                        );
-                    }
-                    // first argument is token
-                    if (i === 0) {
-                        token = arg.value;
-                        if (token === '') {
-                            throw new Error('localize first argument is empty');
-                        }
-                        if (token[0] === '#') {
-                            if (token.length === 1) {
-                                isAnonymous = true;
-                                token = '';
-                            } else {
-                                token = token.slice(1);
-                            }
-                        } else {
-                            isAnonymous = true;
-                            token = arg.value;
-                            offset = 0;
-                            const lang = argv[0];
-                            if (!lang) {
-                                throw new Error(
-                                    `localize argument ${i} is not defined in config, please define it in babel-plugin-macros config, example: { "language_argv": ["english", "schinese", "russian"] }`
-                                );
-                            }
-                            localizationData[lang] = arg.value;
-                        }
-                    } else {
-                        // arguments must be defined in config
-                        const lang = argv[i - offset];
-                        if (!lang) {
-                            throw new Error(
-                                `localize argument ${i} is not defined in config, please define it in babel-plugin-macros config, example: { "language_argv": ["english", "schinese", "russian"] }`
-                            );
-                        }
-                        localizationData[lang] = arg.value;
-                        if (isAnonymous) {
-                            token += arg.value;
-                        }
-                    }
-                }
-
-                // if token is anonymous, hash it
-                if (isAnonymous) {
-                    const hash = createHash('sha256');
-                    hash.update(token);
-                    token = `token_${hash.digest('hex').slice(0, 16)}`;
-                }
-                localizationTable[token] = localizationData;
-
-                // replace localize call with token
-                path.parentPath.replaceWith(
-                    babel.types.stringLiteral('#' + token)
+                parse(
+                    babel,
+                    state.filename,
+                    localizationTable,
+                    argv,
+                    path.parentPath,
+                    false
                 );
+            } else if (
+                path.parentPath &&
+                path.parentPath.isMemberExpression()
+            ) {
+                const callPath = path.parentPath.parentPath;
+                if (callPath && callPath.isCallExpression()) {
+                    parse(
+                        babel,
+                        state.filename,
+                        localizationTable,
+                        argv,
+                        callPath,
+                        true
+                    );
+                }
             }
         }
     },

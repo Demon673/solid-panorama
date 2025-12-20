@@ -1,6 +1,6 @@
 {
     "name": "solid-panorama-all-in-jsx",
-    "version": "0.4.3",
+    "version": "0.4.4",
     "description": "",
     "engines": {
         "node": ">=16.0.0"

@@ -18,6 +18,11 @@ describe('localize_macro', function () {
             const token_b = localize('#test_token_b', 'this is b', '这是b', 'Это b')
             const token_c = localize('#', 'this is c', '这是c', 'Это c')
             const token_d = localize('this is d', '这是d', 'Это d')
+
+            const local_a = localize.$('#test_token_a', 'this is a', '这是a', 'Это a');
+            const local_b = localize.$('#test_token_b', 'this is b', '这是b', 'Это b');
+            const local_c = localize.$('#', 'this is c', '这是c', 'Это c');
+            const local_d = localize.$('this is d', '这是d', 'Это d');
         `,
             __filename,
             {

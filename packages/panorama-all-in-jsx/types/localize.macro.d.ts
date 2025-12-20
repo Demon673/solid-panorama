@@ -1,4 +1,9 @@
-export default function localize(token: string, ...args: string[]): string;
+declare const localize: {
+    (token: string, ...args: string[]): string;
+    $(token: string, ...args: string[]): string;
+};
+
+export default localize;
 
 export interface LocalizationData {
     brazilian?: string;
