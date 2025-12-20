@@ -1,13 +1,18 @@
 name: Publish solid-panorama-polyfill
 on: workflow_dispatch
+
+permissions:
+  id-token: write  # Required for OIDC
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
           registry-url: 'https://registry.npmjs.org'
       - uses: pnpm/action-setup@v4
         with:
@@ -16,6 +21,4 @@ jobs:
             - args: [--frozen-lockfile]
       - run: pnpm build:polyfill
       - run: cp packages/panorama-polyfill/README.md dist/solid-panorama-polyfill/
-      - run: pnpm publish dist/solid-panorama-polyfill --no-git-checks --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTOMATION_TOKEN }}
+      - run: pnpm publish dist/solid-panorama-polyfill --access public
