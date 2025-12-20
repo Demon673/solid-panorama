@@ -4,7 +4,7 @@
 
 Before using this library, you need to learn [SolidJS](https://www.solidjs.com/).
 
-At present, it can be used normally. Please refer to [solid-panorama-example](https://github.com/RobinCodeX/solid-panorama-example).
+At present, it can be used normally. Please refer to [solid-panorama-example](https://github.com/robincodex/solid-panorama-example).
 
 The compiler has been modified and the API of panorama has been optimized.  
 For example, adding attribute and parent element to `createElement` greatly reduces the number of API calls and solves the problem that `$. CreatePanelWithProperties` cannot be called.
@@ -71,7 +71,7 @@ Thanks to ark120202 for creating [react-panorama](https://github.com/ark120202/r
 
 The style is compatible. If the style is a string, an error will pop up if the semicolon is not written at the end of the style. Therefore, the semicolon will be automatically added to the parsing during compilation.
 
-When style is Object, some attributes can be assigned numbers, which will be automatically converted to px. The support list can be viewed：[packages/runtime/src/config.ts](https://github.com/RobinCodeX/solid-panorama/blob/master/packages/runtime/src/config.ts#L1)
+When style is Object, some attributes can be assigned numbers, which will be automatically converted to px. The support list can be viewed：[packages/runtime/src/config.ts](https://github.com/robincodex/solid-panorama/blob/master/packages/runtime/src/config.ts#L1)
 
 ## class
 

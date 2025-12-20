@@ -2,7 +2,7 @@
 
 在使用这个库前你需要学习[SolidJS](https://www.solidjs.com/)，虽然写起来跟 react 很像，但是功能方面是有很大不同的。
 
-目前可正常使用，可参考[solid-panorama-example](https://github.com/RobinCodeX/solid-panorama-example)。
+目前可正常使用，可参考[solid-panorama-example](https://github.com/robincodex/solid-panorama-example)。
 
 针对 PUI 的 API 进行了优化，比如`createElement`加入属性和父元素两个参数，就极大减少了过多的 API 调用，也解决了无法调用`$.CreatePanelWithProperties`的问题，加入了许多便利功能，兼容了 [react-panorama](https://github.com/ark120202/react-panorama) 的部分代码。
 
@@ -68,7 +68,7 @@ Thanks to ark120202 for creating [react-panorama](https://github.com/ark120202/r
 
 对 style 进行了兼容，如果 style 是字符串，在 PUI 里 style 末尾不写分号会弹出错误，所以在编译时会解析自动加上分号。
 
-当 style 是 Object 时，某些属性可以赋值数字，会自动转换成 px，支持列表可查看：[packages/runtime/src/config.ts](https://github.com/RobinCodeX/solid-panorama/blob/master/packages/runtime/src/config.ts#L1)
+当 style 是 Object 时，某些属性可以赋值数字，会自动转换成 px，支持列表可查看：[packages/runtime/src/config.ts](https://github.com/robincodex/solid-panorama/blob/master/packages/runtime/src/config.ts#L1)
 
 ## class
 

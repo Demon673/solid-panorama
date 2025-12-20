@@ -9,10 +9,10 @@
     "main": "index.js",
     "license": "MIT",
     "author": "RobinCode",
-    "homepage": "https://github.com/RobinCodeX/solid-panorama",
+    "homepage": "https://github.com/robincodex/solid-panorama",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/RobinCodeX/solid-panorama.git"
+        "url": "git+https://github.com/robincodex/solid-panorama.git"
     },
     "dependencies": {
         "@moddota/panorama-types": "^1.38.1",

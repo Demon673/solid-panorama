@@ -21,4 +21,4 @@ jobs:
             - args: [--frozen-lockfile]
       - run: pnpm build:runtime
       - run: cp README.md dist/runtime/
-      - run: cd dist/runtime && npm publish --access public
+      - run: pnpm publish dist/runtime --access public
