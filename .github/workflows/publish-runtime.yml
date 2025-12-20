@@ -1,11 +1,16 @@
 name: Publish runtime
 on: workflow_dispatch
+
+permissions:
+  id-token: write  # Required for OIDC
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
           registry-url: 'https://registry.npmjs.org'
@@ -17,5 +22,3 @@ jobs:
       - run: pnpm build:runtime
       - run: cp README.md dist/runtime/
       - run: pnpm publish dist/runtime --no-git-checks --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTOMATION_TOKEN }}
